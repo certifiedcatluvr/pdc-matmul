@@ -1,0 +1,632 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PDC Matrix Framework</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{
+      --bg:#0a0f1e;
+      --card:rgba(255,255,255,0.04);
+      --border:rgba(255,255,255,0.08);
+      --blue:#4a9eff;
+      --purple:#a78bfa;
+      --pink:#f472b6;
+      --green:#34d399;
+      --yellow:#fbbf24;
+      --text:#e2e8f0;
+      --muted:#64748b;
+    }
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Poppins',sans-serif;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:'';
+      position:fixed;
+      width:600px;height:600px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(74,158,255,0.08), transparent 70%);
+      top:-200px;left:-200px;
+      pointer-events:none;
+    }
+    body::after{
+      content:'';
+      position:fixed;
+      width:500px;height:500px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(167,139,250,0.06), transparent 70%);
+      bottom:-150px;right:-150px;
+      pointer-events:none;
+    }
+    .container{max-width:1200px;margin:0 auto;padding:2rem;}
+
+    /* HERO */
+    .hero{
+      text-align:center;
+      padding:5rem 2rem 3rem;
+      position:relative;
+    }
+    .hero-badge{
+      display:inline-block;
+      padding:0.4rem 1rem;
+      border-radius:999px;
+      background:rgba(74,158,255,0.1);
+      border:1px solid rgba(74,158,255,0.2);
+      color:var(--blue);
+      font-size:0.8rem;
+      font-weight:500;
+      margin-bottom:1.5rem;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .hero h1{
+      font-size:3.5rem;
+      font-weight:700;
+      line-height:1.1;
+      letter-spacing:-2px;
+      margin-bottom:1rem;
+      background:linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .hero p{
+      color:var(--muted);
+      font-size:1rem;
+      max-width:600px;
+      margin:0 auto 2rem;
+      line-height:1.8;
+    }
+    .hero-meta{
+      display:flex;
+      justify-content:center;
+      gap:2rem;
+      flex-wrap:wrap;
+    }
+    .meta-item{
+      display:flex;
+      align-items:center;
+      gap:0.5rem;
+      color:var(--muted);
+      font-size:0.85rem;
+    }
+    .meta-dot{
+      width:8px;height:8px;
+      border-radius:50%;
+      background:var(--blue);
+    }
+
+    /* STATS */
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:1rem;
+      margin:3rem 0;
+    }
+    .stat-card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:1.5rem;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      transition:0.3s;
+    }
+    .stat-card:hover{transform:translateY(-4px);border-color:rgba(74,158,255,0.3);}
+    .stat-card::before{
+      content:'';
+      position:absolute;
+      top:0;left:0;right:0;
+      height:2px;
+      background:linear-gradient(90deg,transparent,var(--blue),transparent);
+    }
+    .stat-number{
+      font-size:2.5rem;
+      font-weight:700;
+      font-family:'JetBrains Mono',monospace;
+      background:linear-gradient(135deg,var(--blue),var(--purple));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .stat-label{color:var(--muted);font-size:0.8rem;margin-top:0.3rem;}
+    .stat-sub{color:var(--text);font-size:0.75rem;margin-top:0.2rem;opacity:0.6;}
+
+    /* SECTION */
+    .section{margin:3rem 0;}
+    .section-header{
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      margin-bottom:1.5rem;
+    }
+    .section-line{
+      flex:1;
+      height:1px;
+      background:var(--border);
+    }
+    .section-title{
+      font-size:1.4rem;
+      font-weight:600;
+      color:var(--text);
+      white-space:nowrap;
+    }
+    .section-num{
+      font-family:'JetBrains Mono',monospace;
+      color:var(--blue);
+      font-size:0.85rem;
+    }
+
+    /* CARDS */
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:1.5rem;
+    }
+    .phases-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:1rem;
+    }
+    .phase-card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:1.2rem;
+      transition:0.3s;
+    }
+    .phase-card:hover{border-color:rgba(74,158,255,0.3);transform:translateY(-2px);}
+    .phase-num{
+      font-family:'JetBrains Mono',monospace;
+      font-size:0.75rem;
+      color:var(--blue);
+      margin-bottom:0.5rem;
+    }
+    .phase-title{font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;}
+    .phase-desc{font-size:0.8rem;color:var(--muted);line-height:1.6;}
+    .phase-tag{
+      display:inline-block;
+      margin-top:0.7rem;
+      padding:0.2rem 0.6rem;
+      border-radius:999px;
+      font-size:0.7rem;
+      font-family:'JetBrains Mono',monospace;
+    }
+
+    /* TABLE */
+    .results-table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+    .results-table th{
+      padding:0.8rem 1rem;
+      text-align:left;
+      color:var(--muted);
+      font-weight:500;
+      font-size:0.75rem;
+      text-transform:uppercase;
+      letter-spacing:0.06em;
+      border-bottom:1px solid var(--border);
+    }
+    .results-table td{
+      padding:0.8rem 1rem;
+      border-bottom:1px solid rgba(255,255,255,0.03);
+      font-family:'JetBrains Mono',monospace;
+      font-size:0.82rem;
+    }
+    .results-table tr:hover td{background:rgba(255,255,255,0.02);}
+    .highlight{color:var(--green);font-weight:600;}
+    .best{color:var(--yellow);}
+
+    /* SPEEDUP BARS */
+    .speedup-list{display:flex;flex-direction:column;gap:0.8rem;}
+    .speedup-item{display:flex;align-items:center;gap:1rem;}
+    .speedup-label{width:160px;font-size:0.82rem;color:var(--muted);flex-shrink:0;}
+    .speedup-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;}
+    .speedup-bar{height:100%;border-radius:999px;transition:width 1s ease;}
+    .speedup-value{width:80px;font-family:'JetBrains Mono',monospace;font-size:0.82rem;text-align:right;flex-shrink:0;}
+
+    /* CODE */
+    .code-block{
+      background:rgba(0,0,0,0.4);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:1.2rem;
+      font-family:'JetBrains Mono',monospace;
+      font-size:0.78rem;
+      line-height:1.8;
+      overflow-x:auto;
+      color:#94a3b8;
+    }
+    .code-block .kw{color:#a78bfa;}
+    .code-block .fn{color:#60a5fa;}
+    .code-block .cm{color:#475569;}
+    .code-block .str{color:#34d399;}
+    .code-block .num{color:#fbbf24;}
+
+    /* CHART */
+    .chart-wrap{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:1.5rem;
+      margin-bottom:1rem;
+    }
+    .chart-title{font-size:0.9rem;font-weight:600;margin-bottom:1rem;color:var(--muted);}
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+
+    /* DOCKER */
+    .docker-card{
+      background:linear-gradient(135deg,rgba(74,158,255,0.06),rgba(167,139,250,0.06));
+      border:1px solid rgba(74,158,255,0.15);
+      border-radius:20px;
+      padding:1.5rem;
+    }
+
+    /* FOOTER */
+    .footer{
+      text-align:center;
+      padding:3rem 0 2rem;
+      color:var(--muted);
+      font-size:0.8rem;
+      line-height:2;
+      border-top:1px solid var(--border);
+      margin-top:3rem;
+    }
+
+    @media(max-width:900px){
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .phases-grid{grid-template-columns:1fr 1fr;}
+      .charts-grid{grid-template-columns:1fr;}
+      .hero h1{font-size:2.5rem;}
+    }
+    @media(max-width:600px){
+      .stats-grid{grid-template-columns:1fr 1fr;}
+      .phases-grid{grid-template-columns:1fr;}
+      .hero h1{font-size:2rem;}
+      .container{padding:1rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-badge">FA23/BSCS/347 · Parallel & Distributed Computing</div>
+      <h1>Cloud-Enabled Distributed<br>Matrix Multiplication</h1>
+      <p>A comprehensive framework combining CUDA GPU kernels, OpenMP shared-memory parallelism, MPI distributed computing, and Docker containerization — deployed on Google Colab with Tesla T4 GPU.</p>
+      <div class="hero-meta">
+        <div class="meta-item"><div class="meta-dot"></div>Zainab Ehsan</div>
+        <div class="meta-item"><div class="meta-dot" style="background:var(--purple)"></div>Tesla T4 GPU · Google Colab</div>
+        <div class="meta-item"><div class="meta-dot" style="background:var(--green)"></div>May 2026</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">347x</div>
+        <div class="stat-label">Peak Speedup</div>
+        <div class="stat-sub">CUDA Tiled vs CPU (N=512)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Implementations</div>
+        <div class="stat-sub">CPU · OMP · MPI · CUDA×2</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2048</div>
+        <div class="stat-label">Max Matrix Size</div>
+        <div class="stat-sub">2048×2048 elements</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">0.07s</div>
+        <div class="stat-label">CUDA Tiled N=2048</div>
+        <div class="stat-sub">vs ~150s estimated CPU</div>
+      </div>
+    </div>
+
+    <!-- PHASES -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <span class="section-title">Implementation Phases</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="phases-grid">
+        <div class="phase-card">
+          <div class="phase-num">PHASE 01</div>
+          <div class="phase-title">Sequential CPU Baseline</div>
+          <div class="phase-desc">Standard triple nested loop in C. O(N³) complexity. Serves as the reference for all speedup calculations.</div>
+          <span class="phase-tag" style="background:rgba(74,158,255,0.1);color:var(--blue)">GCC · C</span>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">PHASE 02</div>
+          <div class="phase-title">CUDA Naive Kernel</div>
+          <div class="phase-desc">One GPU thread per output element. 16×16 thread blocks. Global memory access — cache miss on column reads.</div>
+          <span class="phase-tag" style="background:rgba(52,211,153,0.1);color:var(--green)">NVCC · CUDA</span>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">PHASE 03</div>
+          <div class="phase-title">CUDA Tiled Shared Memory</div>
+          <div class="phase-desc">16×16 tiles loaded into shared memory. __syncthreads() synchronization. 10-100x lower memory latency than global memory.</div>
+          <span class="phase-tag" style="background:rgba(167,139,250,0.1);color:var(--purple)">NVCC · CUDA · Shared Mem</span>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">PHASE 04</div>
+          <div class="phase-title">OpenMP Parallelism</div>
+          <div class="phase-desc">#pragma omp parallel for collapse(2) schedule(static). Combines both outer loops into a single parallel work pool.</div>
+          <span class="phase-tag" style="background:rgba(251,191,36,0.1);color:var(--yellow)">GCC · OpenMP</span>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">PHASE 05</div>
+          <div class="phase-title">MPI Distributed</div>
+          <div class="phase-desc">Row decomposition across 4 processes. MPI_Scatter distributes A rows. MPI_Bcast shares B. MPI_Gather collects results.</div>
+          <span class="phase-tag" style="background:rgba(244,114,182,0.1);color:var(--pink)">MPICH · MPI</span>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">PHASE 06</div>
+          <div class="phase-title">Docker Container</div>
+          <div class="phase-desc">nvidia/cuda:11.8.0 base image. GCC + MPICH + NVCC + Python. Reproducible deployment across any compatible environment.</div>
+          <span class="phase-tag" style="background:rgba(74,158,255,0.1);color:var(--blue)">Docker · nvidia/cuda</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS TABLE -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <span class="section-title">Execution Time Results</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="card">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Matrix Size (N)</th>
+              <th>CPU Sequential</th>
+              <th>OpenMP</th>
+              <th>MPI (4 proc)</th>
+              <th>CUDA Naive</th>
+              <th>CUDA Tiled</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>64</td><td>0.0003s</td><td>0.0002s</td><td>0.0002s</td><td>0.2105s*</td><td>0.0227s*</td></tr>
+            <tr><td>128</td><td>0.0028s</td><td>0.0016s</td><td>0.0008s</td><td>0.0003s</td><td>0.0002s</td></tr>
+            <tr><td>256</td><td>0.0333s</td><td>0.0368s</td><td>0.0129s</td><td>0.0006s</td><td>0.0003s</td></tr>
+            <tr><td>512</td><td>0.4174s</td><td>0.3496s</td><td>0.3742s</td><td>0.0020s</td><td class="best">0.0012s ⭐</td></tr>
+            <tr><td>1024</td><td>3.8103s</td><td>6.5371s</td><td>7.3165s</td><td>0.0147s</td><td class="highlight">0.0088s</td></tr>
+            <tr><td>2048</td><td>~150s est.</td><td>N/A</td><td>N/A</td><td>0.1156s</td><td class="highlight">0.0724s</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.75rem;color:var(--muted);margin-top:1rem;font-family:'JetBrains Mono',monospace;">*N=64 CUDA includes GPU initialization overhead — not representative of steady-state performance</p>
+      </div>
+    </div>
+
+    <!-- SPEEDUP -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <span class="section-title">Speedup Analysis (N=512)</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="card">
+        <div class="speedup-list">
+          <div class="speedup-item">
+            <div class="speedup-label">CPU Sequential</div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:0.29%;background:var(--muted)"></div></div>
+            <div class="speedup-value" style="color:var(--muted)">1.00x</div>
+          </div>
+          <div class="speedup-item">
+            <div class="speedup-label">OpenMP</div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:0.34%;background:var(--yellow)"></div></div>
+            <div class="speedup-value" style="color:var(--yellow)">1.19x</div>
+          </div>
+          <div class="speedup-item">
+            <div class="speedup-label">MPI (4 procs)</div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:0.32%;background:var(--pink)"></div></div>
+            <div class="speedup-value" style="color:var(--pink)">1.12x</div>
+          </div>
+          <div class="speedup-item">
+            <div class="speedup-label">CUDA Naive</div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:60%;background:linear-gradient(90deg,var(--blue),var(--purple))"></div></div>
+            <div class="speedup-value" style="color:var(--blue)">208.70x</div>
+          </div>
+          <div class="speedup-item">
+            <div class="speedup-label">CUDA Tiled</div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:100%;background:linear-gradient(90deg,var(--green),var(--blue))"></div></div>
+            <div class="speedup-value" style="color:var(--green)">347.83x</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <span class="section-title">Performance Graphs</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-wrap">
+          <div class="chart-title">Execution Time vs Matrix Size</div>
+          <canvas id="timeChart" height="250"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Speedup over Sequential CPU</div>
+          <canvas id="speedupChart" height="250"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">CUDA Naive vs Tiled (seconds)</div>
+          <canvas id="cudaChart" height="250"></canvas>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">All Methods Comparison (N=512)</div>
+          <canvas id="compareChart" height="250"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- THEORY -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <span class="section-title">Why CUDA Tiled Wins</span>
+        <div class="section-line"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="card">
+          <div style="color:var(--blue);font-weight:600;margin-bottom:0.8rem;font-size:0.95rem;">🔵 CUDA Naive — Global Memory</div>
+          <div style="font-size:0.83rem;color:var(--muted);line-height:1.8;">
+            Each thread reads directly from global memory on every iteration. Column-wise access to matrix B causes cache misses. Every element is loaded from global memory N times. Global memory latency: ~200-800 cycles.
+          </div>
+          <div class="code-block" style="margin-top:1rem;">
+<span class="cm">// Each thread accesses global memory</span>
+<span class="kw">for</span> (k = <span class="num">0</span>; k < N; k++)
+  sum += A[row*N+k] * B[k*N+col];
+<span class="cm">// B[k*N+col] = cache miss every time</span>
+          </div>
+        </div>
+        <div class="card">
+          <div style="color:var(--green);font-weight:600;margin-bottom:0.8rem;font-size:0.95rem;">🟢 CUDA Tiled — Shared Memory</div>
+          <div style="font-size:0.83rem;color:var(--muted);line-height:1.8;">
+            Tiles are loaded into shared memory once, then reused 16 times. Shared memory bandwidth is 10-100x faster than global. Each element loaded once per tile instead of N times. Shared memory latency: ~20-40 cycles.
+          </div>
+          <div class="code-block" style="margin-top:1rem;">
+<span class="kw">__shared__</span> <span class="fn">double</span> tileA[<span class="num">16</span>][<span class="num">16</span>];
+<span class="kw">__shared__</span> <span class="fn">double</span> tileB[<span class="num">16</span>][<span class="num">16</span>];
+<span class="cm">// Load once, use 16 times</span>
+__syncthreads();
+<span class="cm">// 10-100x faster access</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCKER -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <span class="section-title">Docker Containerization</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="docker-card">
+        <div style="color:var(--blue);font-weight:600;margin-bottom:1rem;">Dockerfile</div>
+        <div class="code-block">
+<span class="kw">FROM</span> nvidia/cuda:<span class="num">11.8.0</span>-devel-ubuntu20.04
+
+<span class="kw">RUN</span> apt-get update && apt-get install -y \
+    gcc mpich python3 python3-pip
+
+<span class="kw">RUN</span> pip3 install numpy matplotlib pandas
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> . .
+
+<span class="kw">RUN</span> gcc -O2 -fopenmp -o omp_matmul omp_matmul.c
+<span class="kw">RUN</span> mpicc -O2 -o mpi_matmul mpi_matmul.c
+<span class="kw">RUN</span> nvcc -O2 -o cuda_naive cuda_naive.cu
+<span class="kw">RUN</span> nvcc -O2 -o cuda_tiled cuda_tiled.cu
+
+<span class="kw">CMD</span> [<span class="str">"python3"</span>, <span class="str">"run_all.py"</span>]
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);">
+            $ docker pull certifiedcatluvr/pdc-matmul
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);">
+            $ docker run --gpus all certifiedcatluvr/pdc-matmul
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Cloud-Enabled Distributed Matrix Multiplication Framework<br>
+      Zainab Ehsan · FA23/BSCS/347 · Parallel and Distributed Computing · May 2026<br>
+      Google Colab · Tesla T4 GPU · CUDA 11.8 · MPICH · Docker
+    </div>
+
+  </div>
+
+  <script>
+    const chartDefaults = {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Poppins', size: 11 } } } },
+      scales: {
+        x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } }
+      }
+    };
+
+    // Time chart
+    new Chart(document.getElementById('timeChart'), {
+      type: 'line',
+      data: {
+        labels: ['64','128','256','512','1024'],
+        datasets: [
+          { label: 'CPU Sequential', data: [0.0003,0.0028,0.0333,0.4174,3.8103], borderColor: '#ffb3c6', tension: 0.4, pointRadius: 4 },
+          { label: 'OpenMP', data: [0.0002,0.0016,0.0368,0.3496,6.5371], borderColor: '#c8b6ff', tension: 0.4, pointRadius: 4 },
+          { label: 'MPI (4 procs)', data: [0.0002,0.0008,0.0129,0.3742,7.3165], borderColor: '#f472b6', tension: 0.4, pointRadius: 4 },
+          { label: 'CUDA Naive', data: [null,0.0003,0.0006,0.0020,0.0147], borderColor: '#4a9eff', tension: 0.4, pointRadius: 4 },
+          { label: 'CUDA Tiled', data: [null,0.0002,0.0003,0.0012,0.0088], borderColor: '#34d399', tension: 0.4, pointRadius: 4 },
+        ]
+      },
+      options: { ...chartDefaults }
+    });
+
+    // Speedup chart
+    new Chart(document.getElementById('speedupChart'), {
+      type: 'line',
+      data: {
+        labels: ['128','256','512','1024'],
+        datasets: [
+          { label: 'CUDA Tiled', data: [14,111,347.83,432.9], borderColor: '#34d399', tension: 0.4, pointRadius: 4, fill: true, backgroundColor: 'rgba(52,211,153,0.05)' },
+          { label: 'CUDA Naive', data: [9.3,55.5,208.70,259.2], borderColor: '#4a9eff', tension: 0.4, pointRadius: 4 },
+          { label: 'OpenMP', data: [1.75,0.9,1.19,0.58], borderColor: '#c8b6ff', tension: 0.4, pointRadius: 4 },
+        ]
+      },
+      options: { ...chartDefaults }
+    });
+
+    // CUDA comparison
+    new Chart(document.getElementById('cudaChart'), {
+      type: 'bar',
+      data: {
+        labels: ['128','256','512','1024','2048'],
+        datasets: [
+          { label: 'CUDA Naive', data: [0.0003,0.0006,0.0020,0.0147,0.1156], backgroundColor: 'rgba(74,158,255,0.6)', borderColor: '#4a9eff', borderWidth: 1 },
+          { label: 'CUDA Tiled', data: [0.0002,0.0003,0.0012,0.0088,0.0724], backgroundColor: 'rgba(52,211,153,0.6)', borderColor: '#34d399', borderWidth: 1 },
+        ]
+      },
+      options: { ...chartDefaults }
+    });
+
+    // All methods N=512
+    new Chart(document.getElementById('compareChart'), {
+      type: 'bar',
+      data: {
+        labels: ['CPU Sequential','OpenMP','MPI (4 procs)','CUDA Naive','CUDA Tiled'],
+        datasets: [{
+          label: 'Time (seconds) for N=512',
+          data: [0.4174, 0.3496, 0.3742, 0.0020, 0.0012],
+          backgroundColor: ['rgba(255,179,198,0.7)','rgba(200,182,255,0.7)','rgba(244,114,182,0.7)','rgba(74,158,255,0.7)','rgba(52,211,153,0.7)'],
+          borderColor: ['#ffb3c6','#c8b6ff','#f472b6','#4a9eff','#34d399'],
+          borderWidth: 1
+        }]
+      },
+      options: { ...chartDefaults, plugins: { legend: { display: false } } }
+    });
+  </script>
+</body>
+</html>
