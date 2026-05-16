@@ -307,6 +307,16 @@
         <div class="meta-item"><div class="meta-dot" style="background:var(--purple)"></div>Tesla T4 GPU · Google Colab</div>
         <div class="meta-item"><div class="meta-dot" style="background:var(--green)"></div>May 2026</div>
       </div>
+      <div style="margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="https://github.com/certifiedcatluvr/pdc-matmul" target="_blank"
+           style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.4rem;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text);text-decoration:none;font-size:0.85rem;font-weight:500;">
+          ⚡ GitHub Repo
+        </a>
+        <a href="https://colab.research.google.com" target="_blank"
+           style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.4rem;border-radius:999px;background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.25);color:var(--blue);text-decoration:none;font-size:0.85rem;font-weight:500;">
+          🚀 Run on Colab
+        </a>
+      </div>
     </div>
 
     <!-- STATS -->
@@ -423,17 +433,17 @@
         <div class="speedup-list">
           <div class="speedup-item">
             <div class="speedup-label">CPU Sequential</div>
-            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:0.29%;background:var(--muted)"></div></div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:0.5%;background:var(--muted)"></div></div>
             <div class="speedup-value" style="color:var(--muted)">1.00x</div>
           </div>
           <div class="speedup-item">
             <div class="speedup-label">OpenMP</div>
-            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:0.34%;background:var(--yellow)"></div></div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:2%;background:var(--yellow)"></div></div>
             <div class="speedup-value" style="color:var(--yellow)">1.19x</div>
           </div>
           <div class="speedup-item">
             <div class="speedup-label">MPI (4 procs)</div>
-            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:0.32%;background:var(--pink)"></div></div>
+            <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:1.5%;background:var(--pink)"></div></div>
             <div class="speedup-value" style="color:var(--pink)">1.12x</div>
           </div>
           <div class="speedup-item">
@@ -444,7 +454,7 @@
           <div class="speedup-item">
             <div class="speedup-label">CUDA Tiled</div>
             <div class="speedup-bar-wrap"><div class="speedup-bar" style="width:100%;background:linear-gradient(90deg,var(--green),var(--blue))"></div></div>
-            <div class="speedup-value" style="color:var(--green)">347.83x</div>
+            <div class="speedup-value" style="color:var(--green)">347.83x 🏆</div>
           </div>
         </div>
       </div>
@@ -542,10 +552,10 @@ __syncthreads();
         </div>
         <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);">
-            $ docker pull certifiedcatluvr/pdc-matmul
+            $ docker build -t pdc-matmul .
           </div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);">
-            $ docker run --gpus all certifiedcatluvr/pdc-matmul
+            $ docker run --gpus all pdc-matmul
           </div>
         </div>
       </div>
